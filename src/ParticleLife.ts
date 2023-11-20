@@ -4,9 +4,11 @@ class ParticleLife {
   particles: Particle[];
   ctx: CanvasRenderingContext2D;
   repulse_radius = 100;
-  repulse_scale = 0.05;
+  repulse_scale = 5;
   attract_radius = 200;
-  attract_scale = 0.01;
+  attract_scale = 1;
+
+  last_time = 0;
 
   constructor(ctx: CanvasRenderingContext2D) {
     this.particles = [];
@@ -23,15 +25,17 @@ class ParticleLife {
   }
 
   start() {
-    const callback = () => {
-      this.evolve();
+    const callback = (time_ms: number) => {
+      const dt = this.last_time - time_ms / 1000; // convert in seconds
+      this.last_time = time_ms / 1000;
+      this.evolve(dt);
       this.draw();
       window.requestAnimationFrame(callback);
     };
     window.requestAnimationFrame(callback);
   }
 
-  evolve() {
+  evolve(dt: number) {
     let d = 0;
     let dx = 0;
     let dy = 0;
@@ -45,15 +49,27 @@ class ParticleLife {
 
           if (d < this.attract_radius) {
             particle.v_x +=
-              (dx / d) * this.attract_scale * (1 - d / this.attract_radius);
+              dt *
+              (dx / d) *
+              this.attract_scale *
+              (1 - d / this.attract_radius);
             particle.v_y +=
-              (dy / d) * this.attract_scale * (1 - d / this.attract_radius);
+              dt *
+              (dy / d) *
+              this.attract_scale *
+              (1 - d / this.attract_radius);
           }
           if (d < this.repulse_radius) {
             particle.v_x -=
-              (dx / d) * this.repulse_scale * (1 - d / this.repulse_radius);
+              dt *
+              (dx / d) *
+              this.repulse_scale *
+              (1 - d / this.repulse_radius);
             particle.v_y -=
-              (dy / d) * this.repulse_scale * (1 - d / this.repulse_radius);
+              dt *
+              (dy / d) *
+              this.repulse_scale *
+              (1 - d / this.repulse_radius);
           }
         }
       }
