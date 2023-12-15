@@ -15,8 +15,9 @@ function main() {
 
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-
-  const particle_life = new ParticleLife(ctx);
+  const nb_particles = 200;
+  const nb_particle_kinds = 7;
+  const particle_life = new ParticleLife(ctx, nb_particles, nb_particle_kinds);
   particle_life.start();
 }
 
